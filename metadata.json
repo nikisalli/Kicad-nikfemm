@@ -1,0 +1,34 @@
+{
+    "$schema": "https://go.kicad.org/pcm/schemas/v1",
+    "name": "nikfemm",
+    "description": "A plugin for power density and voltage drop analysis of PCBs",
+    "description_full": "A plugin for power density and voltage drop analysis of PCBs",
+    "identifier": "com.github.nikisalli.nikfemm",
+    "type": "plugin",
+    "author": {
+        "name": "Niklas Sallali",
+        "contact": {
+            "github": "https://github.com/nikisalli"
+        }
+    },
+    "maintainer": {
+        "name": "Niklas Sallali",
+        "contact": {
+            "github": "https://github.com/nikisalli"
+        }
+    },
+    "license": "GPL-3.0",
+    "resources": {
+        "homepage": "https://github.com/nikisalli/nikfemm"
+    },
+    "tags": [
+        "postlayoutsimulation"
+    ],
+    "versions": [
+        {
+            "version": "0.1",
+            "status": "stable",
+            "kicad_version": "7.00"
+        }
+    ]
+}
