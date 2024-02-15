@@ -2,3 +2,5 @@ __pycache__
 .vscode
 *.html
 *.kicad_pcb
+*.zip
+plugins/parse.py
