@@ -1,6 +1,3 @@
-import numpy as np
-
-
 OK = 0
 NotYetConnected = 0
 ErrorConnection = -1

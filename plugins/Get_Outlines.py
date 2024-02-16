@@ -1,16 +1,16 @@
-import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle, Ellipse, Polygon, PathPatch
-from matplotlib.transforms import Affine2D
-from matplotlib.path import Path
-from matplotlib.collections import PatchCollection
-import numpy as np
+# import matplotlib.pyplot as plt
+# from matplotlib.patches import Rectangle, Ellipse, Polygon, PathPatch
+# from matplotlib.transforms import Affine2D
+# from matplotlib.path import Path
+# from matplotlib.collections import PatchCollection
+# import numpy as np
 import shapely
 import shapely.ops
 
 def Get_Outlines(data, choosen_net):
-    figure, axes = plt.subplots()
-    axes.set_aspect(1)
-    axes.invert_yaxis()
+    # figure, axes = plt.subplots()
+    # axes.set_aspect(1)
+    # axes.invert_yaxis()
 
     shape = {0: "Kreis", 1: "Oval", 2: "Rechteck"}
 
@@ -118,45 +118,44 @@ def Get_Outlines(data, choosen_net):
         else:
             merged_shapes.append(shapely.ops.unary_union(layer))
     
-    if False:
-        def plot_polygon(ax, poly, **kwargs):
-            # plot representative point
-            point = poly.representative_point()
-            ax.plot(point.x, point.y, "o", color=kwargs["color"], alpha=0.5)
-            path = Path.make_compound_path(
-                Path(np.asarray(poly.exterior.coords)[:, :2]),
-                *[Path(np.asarray(ring.coords)[:, :2]) for ring in poly.interiors])
-            patch = PathPatch(path, **kwargs)
-            collection = PatchCollection([patch], **kwargs)
-            ax.add_collection(collection, autolim=True)
-            ax.autoscale_view()
-            return collection
-        # plot the merged polygons
-        for layer, shape in enumerate(merged_shapes):
-            if shape is None:
-                continue
-            if isinstance(shape, shapely.geometry.Polygon):
-                plot_polygon(axes, shape, color=Color[layer], alpha=0.5)
-            elif isinstance(shape, shapely.geometry.MultiPolygon):
-                for poly in shape.geoms:
-                    plot_polygon(axes, poly, color=Color[layer], alpha=0.5)
-            else:
-                print("unknown shape", type(shape))
-        # plot drills like black crosses
-        for drill in drills:
-            for layer in drill["Layer"]:
-                axes.plot(
-                    [drill["Center"][0] - 0.5, drill["Center"][0] + 0.5],
-                    [drill["Center"][1], drill["Center"][1]],
-                    color=Color[layer],
-                    alpha=0.5,
-                )
-                axes.plot(
-                    [drill["Center"][0], drill["Center"][0]],
-                    [drill["Center"][1] - 0.5, drill["Center"][1] + 0.5],
-                    color=Color[layer],
-                    alpha=0.5,
-                )
-        plt.show()
+    # def plot_polygon(ax, poly, **kwargs):
+    #     # plot representative point
+    #     point = poly.representative_point()
+    #     ax.plot(point.x, point.y, "o", color=kwargs["color"], alpha=0.5)
+    #     path = Path.make_compound_path(
+    #         Path(np.asarray(poly.exterior.coords)[:, :2]),
+    #         *[Path(np.asarray(ring.coords)[:, :2]) for ring in poly.interiors])
+    #     patch = PathPatch(path, **kwargs)
+    #     collection = PatchCollection([patch], **kwargs)
+    #     ax.add_collection(collection, autolim=True)
+    #     ax.autoscale_view()
+    #     return collection
+    # # plot the merged polygons
+    # for layer, shape in enumerate(merged_shapes):
+    #     if shape is None:
+    #         continue
+    #     if isinstance(shape, shapely.geometry.Polygon):
+    #         plot_polygon(axes, shape, color=Color[layer], alpha=0.5)
+    #     elif isinstance(shape, shapely.geometry.MultiPolygon):
+    #         for poly in shape.geoms:
+    #             plot_polygon(axes, poly, color=Color[layer], alpha=0.5)
+    #     else:
+    #         print("unknown shape", type(shape))
+    # # plot drills like black crosses
+    # for drill in drills:
+    #     for layer in drill["Layer"]:
+    #         axes.plot(
+    #             [drill["Center"][0] - 0.5, drill["Center"][0] + 0.5],
+    #             [drill["Center"][1], drill["Center"][1]],
+    #             color=Color[layer],
+    #             alpha=0.5,
+    #         )
+    #         axes.plot(
+    #             [drill["Center"][0], drill["Center"][0]],
+    #             [drill["Center"][1] - 0.5, drill["Center"][1] + 0.5],
+    #             color=Color[layer],
+    #             alpha=0.5,
+    #         )
+    # plt.show()
             
     return merged_shapes, drills

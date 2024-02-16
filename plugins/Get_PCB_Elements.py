@@ -286,7 +286,6 @@ def Get_PCB_Elements(board: pcbnew.BOARD, connect: pcbnew.CONNECTIVITY_DATA):
                 # get all segments for this layer
                 segments = d["Segments"][layer].copy()
                 # get all segments that are connected to other segments
-                subgraphs = []
                 # we basically need to find all cycles in an undirected graph
                 G = nx.Graph()
                 for segment in segments:
