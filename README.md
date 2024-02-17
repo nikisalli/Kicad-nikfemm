@@ -2,7 +2,7 @@ This kicad plugin uses nikfemm simulator to plot power density and voltage on PC
 Please note that this is just a demo and I tested it on linux systems only (but you could manage to make it work on windows quite easily).
 Also you'll need to install all the dependencies by yourself.
 
-#installation
+# installation
 to install the nikfemm python module:
 - ```git clone https://github.com/nikisalli/nikfemm.git```
 - ```cd nikfemm/python```
