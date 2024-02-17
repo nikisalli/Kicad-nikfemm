@@ -613,9 +613,11 @@ class NikFEMMFrame(wx.Frame):
                             # name, position, layer
                             pads[net].append((name, d["Position"], d["Layer"]))
         self.pads = pads
+
+        self.SetSize((1200, 1000))
         
         # the gui should have a widget to select the net
-        panel = wx.Panel(self, size=(1000, 1000))
+        panel = wx.Panel(self)
         vbox = wx.BoxSizer(wx.VERTICAL)
 
         topgridbox = wx.GridBagSizer(2, 2)
@@ -645,15 +647,31 @@ class NikFEMMFrame(wx.Frame):
         btn.Bind(wx.EVT_BUTTON, self.OnStartSimulation)
 
         # add a widget to select the resistance for the vias and pads
-        st3 = wx.StaticText(panel, label="Select resistance:           ")
+        # label
+        st3 = wx.StaticText(panel, label="Select Via and Pad resistance (in Ohm):")
         topgridbox.Add(st3, (0, 2), (1, 1), flag=wx.EXPAND | wx.ALL, border=5)
-
-        # add a spinner to select the resistance
-        self.resistance_spinner = floatspin.FloatSpin(panel, value=0.01, increment=0.01, digits=4, min_val=1e-6, max_val=1e6)
+        # spinner
+        self.resistance_spinner = floatspin.FloatSpin(panel, value=0.01, increment=0.01, digits=6, min_val=1e-6, max_val=1e6)
         topgridbox.Add(self.resistance_spinner, (1, 2), (1, 1), flag=wx.EXPAND | wx.ALL, border=5)
         self.via_resistance = 0.01
         # add a callback when the resistance changes
         self.resistance_spinner.Bind(floatspin.EVT_FLOATSPIN, self.OnResistanceChange)
+
+        # add a widget to select the maximum triangle area for the mesher
+        st4 = wx.StaticText(panel, label="Select max triangle area (in mm²):")
+        topgridbox.Add(st4, (0, 3), (1, 1), flag=wx.EXPAND | wx.ALL, border=5)
+        self.max_triangle_area_spinner = floatspin.FloatSpin(panel, value=1, increment=1, digits=4, min_val=1e-4, max_val=1e6)
+        topgridbox.Add(self.max_triangle_area_spinner, (1, 3), (1, 1), flag=wx.EXPAND | wx.ALL, border=5)
+        self.max_triangle_area = 1
+        self.max_triangle_area_spinner.Bind(floatspin.EVT_FLOATSPIN, self.OnMaxTriangleAreaChange)
+
+        # add a widget to select the minimum triangle angle for the mesher
+        st5 = wx.StaticText(panel, label="Select min triangle angle (in degrees):")
+        topgridbox.Add(st5, (0, 4), (1, 1), flag=wx.EXPAND | wx.ALL, border=5)
+        self.min_triangle_angle_spinner = floatspin.FloatSpin(panel, value=30, increment=1, digits=0, min_val=1, max_val=33)
+        topgridbox.Add(self.min_triangle_angle_spinner, (1, 4), (1, 1), flag=wx.EXPAND | wx.ALL, border=5)
+        self.min_triangle_angle = 15
+        self.min_triangle_angle_spinner.Bind(floatspin.EVT_FLOATSPIN, self.OnMinTriangleAngleChange)
 
         vbox.Add(topgridbox, 0, wx.ALL | wx.EXPAND, 5)
 
@@ -687,6 +705,14 @@ class NikFEMMFrame(wx.Frame):
     
     def OnResistanceChange(self, e):
         self.via_resistance = self.resistance_spinner.GetValue()
+    
+    def OnMaxTriangleAreaChange(self, e):
+        self.max_triangle_area = self.max_triangle_area_spinner.GetValue() / 1e6
+        print("max triangle area mm2", self.max_triangle_area * 1e6)
+        print("max triangle area m2", self.max_triangle_area)
+
+    def OnMinTriangleAngleChange(self, e):
+        self.min_triangle_angle = self.min_triangle_angle_spinner.GetValue()
     
     def OnStartSimulation(self, e):
         # get the selected net
@@ -742,7 +768,7 @@ class NikFEMMFrame(wx.Frame):
                                         [drill["Center"][0] / 1e3, drill["Center"][1] / 1e3],
                                         layer_map[drill['Layer'][0]], layer_map[drill['Layer'][1]], self.via_resistance)
     
-        system, triangles, vertices = simulation.generate_system(False, 1, 10) # refine, max triangle area, min triangle angle
+        system, triangles, vertices = simulation.generate_system(False, self.max_triangle_area, self.min_triangle_angle) # max triangle area, min triangle angle
 
         # set the voltage for the pads
         for pad in choosen_pads:
@@ -752,18 +778,20 @@ class NikFEMMFrame(wx.Frame):
             simulation.set_voltage(system, position, voltage, layer)
         
         # solve the system
-        verts, triangles = simulation.solve(system)
+        voltages, triangles, power_densities = simulation.solve(system)
+
+        # normalize power densities
+        power_densities = [p[1] for p in power_densities]
+        # clip power densities to 95th percentile
+        power_densities = np.clip(power_densities, 0, np.quantile(power_densities, 0.95))
 
         # plot the results
         fig = go.Figure()
-
         # Unpack the vertices and triangles
-        layers, xs, ys, voltages = zip(*verts)
+        layers, xs, ys, voltages = zip(*voltages)
         _, v1s, v2s, v3s = zip(*triangles)
-
         # divide layers by 1e3 to convert from m to mm
         layers = [layer / 1e3 for layer in layers]
-
         # Create a 3D surface plot for the triangles
         mesh = go.Mesh3d(
             x=xs,
@@ -777,20 +805,45 @@ class NikFEMMFrame(wx.Frame):
             colorscale='Jet',
             opacity=0.9,
         )
-
         fig.update_layout(
             scene=dict(
                 aspectmode='data',
                 aspectratio=dict(x=1, y=1, z=1)
             )
         )
-
         # Add the mesh to the figure
         fig.add_trace(mesh)
-
         # Show the plot
         fig.show()
 
+        # plot the power densities
+        fig = go.Figure()
+        # Create a 3D surface plot for the triangles
+        mesh = go.Mesh3d(
+            x=xs,
+            y=ys,
+            z=layers,
+            i=v1s,
+            j=v2s,
+            k=v3s,
+            intensity=power_densities,
+            intensitymode='cell',
+            colorscale='Jet',
+            opacity=0.9,
+        )
+        fig.update_layout(
+            scene=dict(
+                aspectmode='data',
+                aspectratio=dict(x=1, y=1, z=1)
+            )
+        )
+        # Add the mesh to the figure
+        fig.add_trace(mesh)
+        # Show the plot
+        fig.show()
+    
+    def OnClose(self, e):
+        self.Destroy()
 
 class ActionKiCadPlugin(pcbnew.ActionPlugin):
     def defaults(self):
