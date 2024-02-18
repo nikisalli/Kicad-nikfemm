@@ -20,15 +20,13 @@ to install the plugin:
 - click the install from file button
 - select the zip in the main folder of this repo
 
-
+![photo_2024-02-18_00-19-53](https://github.com/nikisalli/Kicad-nikfemm/assets/31286021/30aabfed-64b8-4aa3-ad29-82ca0d1867d1)
 
 https://github.com/nikisalli/Kicad-nikfemm/assets/31286021/08204902-4b45-483e-9cc3-d83dded151fe
 
 
 
 https://github.com/nikisalli/Kicad-nikfemm/assets/31286021/887e64f4-ccd9-4500-953b-6109ba01c733
-
-![photo_2024-02-18_00-19-53](https://github.com/nikisalli/Kicad-nikfemm/assets/31286021/30aabfed-64b8-4aa3-ad29-82ca0d1867d1)
 
 ![photo_2024-02-17_17-42-46](https://github.com/nikisalli/Kicad-nikfemm/assets/31286021/5f928cd1-b6d8-43fb-bb2b-1d909fd0ca02)
 
