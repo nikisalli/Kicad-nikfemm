@@ -739,9 +739,6 @@ class NikFEMMFrame(wx.Frame):
 
         merged_shapes, drills = Get_Outlines(self.data, choosen_net=choosen_net)
 
-        # simulate
-        simulation = MultiLayerCurrentDensitySimulation(2, [35e-6, 35e-6])
-
         layer_map = {}
         new_layer = 0
         for layer, shape in enumerate(merged_shapes):
@@ -750,6 +747,9 @@ class NikFEMMFrame(wx.Frame):
                     layer_map[layer] = new_layer
                     new_layer += 1
         print(layer_map)
+
+        # simulate
+        simulation = MultiLayerCurrentDensitySimulation(len(layer_map), [35e-6 for x in layer_map])
 
         for layer, shape in enumerate(merged_shapes):
             if shape is None:
