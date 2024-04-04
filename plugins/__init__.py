@@ -221,8 +221,8 @@ def Get_PCB_Elements(board: pcbnew.BOARD, connect: pcbnew.CONNECTIVITY_DATA):
             temp["Area"] = ToMM(ToMM(Pad.GetEffectivePolygon().Area()))
             temp["PadName"] = Pad.GetPadName()
             
-            if Pad.GetParent():
-                temp["FootprintReference"] = Pad.GetParent().GetReference()
+            if Pad.GetParentFootprint():
+                temp["FootprintReference"] = Pad.GetParentFootprint().GetReference()
 
         elif type(Pad) is pcbnew.ZONE:
             # pcbnew.ZONE().GetZoneName
