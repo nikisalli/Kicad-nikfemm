@@ -1,3 +1,6 @@
+![photo_2024-02-18_00-19-53](https://github.com/nikisalli/Kicad-nikfemm/assets/31286021/30aabfed-64b8-4aa3-ad29-82ca0d1867d1)
+
+# what is this?
 - This kicad plugin uses [nikfemm](https://github.com/nikisalli/nikfemm) simulator to plot power density and voltage on PCB geometries.
 - Please note that this is just a demo and I tested it on linux systems only (but you could manage to make it work on windows quite easily).
 - Also you'll need to install all the dependencies by yourself.
@@ -20,8 +23,10 @@ to install the plugin:
 - click the install from file button
 - select the zip in the main folder of this repo
 
-![photo_2024-02-18_00-19-53](https://github.com/nikisalli/Kicad-nikfemm/assets/31286021/30aabfed-64b8-4aa3-ad29-82ca0d1867d1)
+# acknowledgements
+- some parts of the board parsing code are directly taken from https://github.com/Steffen-W/KiCad-Parasitics
 
+# nice pictures
 https://github.com/nikisalli/Kicad-nikfemm/assets/31286021/08204902-4b45-483e-9cc3-d83dded151fe
 
 

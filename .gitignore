@@ -3,3 +3,4 @@ __pycache__
 *.html
 *.kicad_pcb
 plugins/parse.py
+test_projects
